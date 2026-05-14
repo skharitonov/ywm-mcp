@@ -158,3 +158,55 @@ class WebmasterClient:
 
     def delete(self, path: str) -> dict | list | None:
         return self._request("DELETE", path)
+
+
+class OAuthFlow:
+    """Yandex OAuth device code flow."""
+
+    POLL_INTERVAL = 5      # seconds between token poll attempts
+    POLL_TIMEOUT = 300     # 5 minutes total
+
+    def request_device_code(self, client_id: str) -> dict:
+        """POST to device/code endpoint, return {device_code, user_code, verification_url, expires_in, interval}."""
+        resp = httpx.post(
+            DEVICE_CODE_URL,
+            data={"client_id": client_id, "scope": SCOPES},
+            timeout=15,
+        )
+        if resp.status_code != 200:
+            raise WebmasterAPIError(resp.status_code, "DEVICE_CODE_ERROR", resp.text)
+        return resp.json()
+
+    def poll_for_token(self, client_id: str, device_code: str) -> str:
+        """Poll TOKEN_URL until approved or timed out. Returns access_token string."""
+        deadline = time.time() + self.POLL_TIMEOUT
+        while time.time() < deadline:
+            time.sleep(self.POLL_INTERVAL)
+            resp = httpx.post(
+                TOKEN_URL,
+                data={
+                    "grant_type": "urn:ietf:params:oauth:grant-type:device_code",
+                    "code": device_code,
+                    "client_id": client_id,
+                },
+                timeout=15,
+            )
+            data = resp.json()
+            if resp.status_code == 200 and "access_token" in data:
+                return data["access_token"]
+            error = data.get("error", "")
+            if error == "authorization_pending":
+                continue
+            if error == "slow_down":
+                time.sleep(self.POLL_INTERVAL)
+                continue
+            raise WebmasterAPIError(resp.status_code, error, data.get("error_description", ""))
+        raise WebmasterAPIError(0, "TIMEOUT", "Authorization timed out. Call start_auth again.")
+
+    def save_token(self, access_token: str) -> Path:
+        """Save token to platform config dir (or YANDEX_WEBMASTER_TOKEN_DIR override)."""
+        dir_path = _token_dir()
+        dir_path.mkdir(parents=True, exist_ok=True)
+        token_file = dir_path / "token.json"
+        token_file.write_text(json.dumps({"access_token": access_token, "token_type": "bearer"}))
+        return token_file
