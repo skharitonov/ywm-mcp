@@ -129,6 +129,8 @@ Add the server to your project or global MCP settings. Run the following from yo
 claude mcp add ywm --command "uvx" --args "--from,git+https://github.com/skharitonov/mcp-ywm,ywm-mcp"
 ```
 
+> The comma-separated `--args` format above is equivalent to the JSON array form `["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"]` shown in the JSON config below.
+
 Or edit `~/.claude/settings.json` directly and add an entry under `mcpServers`:
 
 ```json
@@ -191,7 +193,8 @@ The server will display a URL and a short code. Open the URL in your browser, en
 
 The token is stored at:
 
-- **macOS / Linux:** `~/Library/Application Support/yandex-webmaster-mcp/token.json` (or the platform config dir for your OS)
+- **macOS:** `~/Library/Application Support/yandex-webmaster-mcp/token.json`
+- **Linux:** `~/.config/yandex-webmaster-mcp/token.json`
 - **Windows:** `%APPDATA%\yandex-webmaster-mcp\token.json`
 
 > **Override the storage location:** Set `YANDEX_WEBMASTER_TOKEN_DIR` in the MCP config's `env` block to store the token in a custom directory. This is useful for shared environments or CI systems.
@@ -271,6 +274,9 @@ To pass environment variables to the server, add an `env` block to your MCP conf
   }
 }
 ```
+
+> **macOS/Linux:** Use the full uvx path from `which uvx` (typically `/Users/yourname/.local/bin/uvx` on macOS or `/home/yourname/.local/bin/uvx` on Linux)  
+> **Windows:** Use the full uvx path from `(Get-Command uvx).Source` (typically `C:\Users\yourname\.local\bin\uvx.exe`)
 
 ---
 
