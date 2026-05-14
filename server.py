@@ -24,6 +24,7 @@ def _err(e: WebmasterAPIError) -> str:
     return json.dumps(
         {"error": True, "error_code": e.error_code, "message": e.message, "status": e.status_code},
         ensure_ascii=False,
+        indent=2,
     )
 
 
@@ -62,7 +63,9 @@ def start_auth(client_id: str) -> str:
         device_data = flow.request_device_code(client_id)
         verification_url = device_data.get("verification_url", "https://ya.ru/device")
         user_code = device_data.get("user_code", "")
-        device_code = device_data["device_code"]
+        device_code = device_data.get("device_code")
+        if not device_code:
+            raise WebmasterAPIError(400, "INVALID_DEVICE_CODE", "Server did not return device_code")
 
         result = (
             f"Open this URL in your browser and enter the code shown:\n\n"
@@ -78,6 +81,8 @@ def start_auth(client_id: str) -> str:
         return result + f"\n\nAuthentication successful! Token saved to: {token_path}"
     except WebmasterAPIError as e:
         return _err(e)
+    except (OSError, ValueError) as e:
+        return json.dumps({"error": True, "error_code": "TOKEN_SAVE_ERROR", "message": str(e)}, ensure_ascii=False)
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -86,6 +91,7 @@ def start_auth(client_id: str) -> str:
 
 
 def main():
+    """Run the Yandex Webmaster MCP server."""
     mcp.run()
 
 
