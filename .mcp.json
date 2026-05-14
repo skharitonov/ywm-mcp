@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "yandex-webmaster": {
+      "command": "uvx",
+      "args": ["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"],
+      "env": {
+        "YANDEX_WEBMASTER_API_KEY": "",
+        "YANDEX_WEBMASTER_TOKEN_DIR": ""
+      }
+    }
+  }
+}
