@@ -181,7 +181,6 @@ class OAuthFlow:
         """Poll TOKEN_URL until approved or timed out. Returns access_token string."""
         deadline = time.time() + self.POLL_TIMEOUT
         while time.time() < deadline:
-            time.sleep(self.POLL_INTERVAL)
             resp = httpx.post(
                 TOKEN_URL,
                 data={
@@ -191,14 +190,18 @@ class OAuthFlow:
                 },
                 timeout=15,
             )
-            data = resp.json()
+            try:
+                data = resp.json()
+            except Exception:
+                raise WebmasterAPIError(resp.status_code, "JSON_DECODE_ERROR", resp.text)
             if resp.status_code == 200 and "access_token" in data:
                 return data["access_token"]
             error = data.get("error", "")
             if error == "authorization_pending":
+                time.sleep(self.POLL_INTERVAL)
                 continue
             if error == "slow_down":
-                time.sleep(self.POLL_INTERVAL)
+                time.sleep(self.POLL_INTERVAL * 2)
                 continue
             raise WebmasterAPIError(resp.status_code, error, data.get("error_description", ""))
         raise WebmasterAPIError(0, "TIMEOUT", "Authorization timed out. Call start_auth again.")
