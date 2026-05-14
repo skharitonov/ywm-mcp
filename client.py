@@ -56,8 +56,13 @@ class WebmasterClient:
         else:
             path = _token_path()
             if path.exists():
-                data = json.loads(path.read_text())
-                self.token = data["access_token"]
+                try:
+                    data = json.loads(path.read_text())
+                    self.token = data.get("access_token")
+                    if not self.token:
+                        raise ValueError("token.json missing 'access_token' field")
+                except (json.JSONDecodeError, OSError, ValueError) as e:
+                    raise ValueError(f"Failed to read token file at {path}: {e}")
             else:
                 raise ValueError(
                     "No authentication found. "
@@ -91,7 +96,7 @@ class WebmasterClient:
         json_body: dict | None = None,
     ) -> dict | list | None:
         """Make HTTP request with retry on 500/502/503."""
-        # Собираем query params, поддерживая list-значения (query_indicator и т.д.)
+        # Build query params, supporting list values (e.g. query_indicator)
         raw_params: list[tuple[str, str]] = []
         if params:
             for key, val in params.items():
