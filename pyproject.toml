@@ -1,0 +1,22 @@
+[project]
+name = "yandex-webmaster-mcp"
+version = "0.1.0"
+description = "MCP server for Yandex Webmaster API v4.1"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+    "fastmcp>=2.0.0",
+    "httpx>=0.28.0",
+    "platformdirs>=4.0.0",
+]
+
+[project.scripts]
+ywm-mcp = "server:main"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["server", "client"]
