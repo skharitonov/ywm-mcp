@@ -2,10 +2,11 @@
   "mcpServers": {
     "yandex-webmaster": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"],
+      "args": ["--from", "git+https://github.com/skharitonov/ywm-mcp", "ywm-mcp"],
       "env": {
-        "YANDEX_WEBMASTER_API_KEY": "",
-        "YANDEX_WEBMASTER_TOKEN_DIR": ""
+        "YANDEX_WEBMASTER_CONFIG_PATH": "",
+        "YANDEX_WEBMASTER_TOKEN_FILE": "",
+        "YANDEX_WEBMASTER_CLIENT_ID_FILE": ""
       }
     }
   }

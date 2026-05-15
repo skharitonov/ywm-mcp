@@ -127,7 +127,7 @@ You should see output like `uv 0.5.x`. If you see `command not found`, see the [
 Add the server to your project or global MCP settings. Run the following from your project directory or home directory:
 
 ```bash
-claude mcp add --scope project ywm -- uvx --from git+https://github.com/skharitonov/mcp-ywm ywm-mcp
+claude mcp add --scope project ywm -- uvx --from git+https://github.com/skharitonov/ywm-mcp ywm-mcp
 ```
 
 > Use `--scope user` instead of `--scope project` to make the server available across all your projects rather than just the current one.
@@ -139,7 +139,7 @@ Or edit `~/.claude/settings.json` directly and add an entry under `mcpServers`:
   "mcpServers": {
     "ywm": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"]
+      "args": ["--from", "git+https://github.com/skharitonov/ywm-mcp", "ywm-mcp"]
     }
   }
 }
@@ -166,7 +166,7 @@ Add the following, replacing the `uvx` path with the full path you found above:
   "mcpServers": {
     "ywm": {
       "command": "/Users/yourname/.local/bin/uvx",
-      "args": ["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"]
+      "args": ["--from", "git+https://github.com/skharitonov/ywm-mcp", "ywm-mcp"]
     }
   }
 }
@@ -277,12 +277,12 @@ When you pass a `host_id` to any tool, URL-encoding (e.g. `https%3Aexample.com%3
   "mcpServers": {
     "ywm-site1": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"],
+      "args": ["--from", "git+https://github.com/skharitonov/ywm-mcp", "ywm-mcp"],
       "env": { "YANDEX_WEBMASTER_TOKEN_FILE": "/path/to/token-site1.json" }
     },
     "ywm-site2": {
       "command": "uvx",
-      "args": ["--from", "git+https://github.com/skharitonov/mcp-ywm", "ywm-mcp"],
+      "args": ["--from", "git+https://github.com/skharitonov/ywm-mcp", "ywm-mcp"],
       "env": { "YANDEX_WEBMASTER_TOKEN_FILE": "/path/to/token-site2.json" }
     }
   }
